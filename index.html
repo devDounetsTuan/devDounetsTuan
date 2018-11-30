@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Page Demo</title>
+
+</head>
+
+<body>
+    <div id="myform" class="float-left ml-2 col-md-4 mt-2">
+        <input class="float-left col-xs-2 " type="text" id="txtcontent">
+        <button onclick="rowAdd()" type="submit" class="btn btn-sm btn-primary float-left ml-1 " id="add">Add</button>
+        <p class="float-left ml-1" style="display: none" id="showError">Content not empty !</p>
+    </div>
+    <div class="float-left col-md-6 mt-2 mt-2">
+        <input onkeyup="likeSearch(this)" placeholder="Search for names.." class="float-left col-xs-4" type="text" id="txtsearch">
+    </div>
+    <br>
+    <br>
+    <br>
+    <table id="dt_table" class="table table-dark sizetable col-md-4 ml-4 mt-0">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th class='col-md-4 ' scope="col">Content</th>
+                <th class='col-md-4 ' scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody id="bodyData">
+
+        </tbody>
+    </table>
+</body>
+<script>
+
+    function rowEdit(but) {
+        /*
+        var count = $(but).val();
+        var val = $('#bodyData td:eq("' + ((count * 4) - 3) + '")').text();
+        $('#bodyData').find("td").eq((count * 4) - 3).replaceWith('<td><input class="form-control input-sm" value="' + val + '"></td>');
+        $('#bodyData').find("td").eq((count * 4) - 2).replaceWith('<td style="width: 40px"><button onclick="rowAccept(this)"
+                class="btn btn-light" value="' + count + '">Accept</button></td>');
+        */
+        /*
+        var $row = $(but).parents('tr');
+        $row.attr('id', 'allowedit');
+        if ($row.attr('id') == 'allowedit') {
+        
+        }
+        */
+        var val = $(but).parents('td').prev('td').text();
+        $(but).parents('td').prev('td').replaceWith('<td><input id="txteditcontent" class="form-control input-sm"  value="' + val + '"></td>');
+        $(but).parents('td').replaceWith('<td style="width: 40px"><button  onclick="rowAccept(this)" class="btn btn-light">Accept</button></td>');
+    }
+
+    function rowDelete(but) {
+        /*
+        keyvalue = $(but).val();
+        alert("delete from array " + keyvalue);
+        keyvalue--;
+        $('#bodyData tr:eq("' + keyvalue + '")').remove();
+        */
+        var rowd = $(but).parents('tr');
+        rowd.remove();
+        var sizeArr = $('#bodyData tr').length;
+        var posE = parseInt($(but).val());
+
+
+        var sizeChg = (sizeArr + 1) - posE;
+
+        for (var i = 0; i < sizeChg; i++) {
+            var cont = 0;
+            cont = posE;
+            $('#bodyData').find("td").eq(posE * 4 - 4).replaceWith('<td>' + cont + '</td>');
+            $('#bodyData').find("td").eq(posE * 4 - 1).replaceWith('<td class="col-md-2 "><button  onclick="rowDelete(this)" class="btn btn-light delete"  value="' + cont + '">Delete</button></td>');
+            posE++;
+        }
+
+    }
+
+    function rowAdd(but) {
+        add_content = $('#txtcontent').val();
+        // array.push(content);
+        if (myValidate(add_content)) {
+            count = $('#bodyData tr').length;
+            ++count;
+            $('#bodyData:last').append("<tr>"
+                + "<td>" + count + "</td>"
+                + "<td class='col-md-4 '>" + convertContent(add_content) + "</td>"
+                + "<td class='col-md-2 '><button  onclick='rowEdit(this)' class='btn btn-light edit'  value='" + count + "'>Edit</button></td>"
+                + "<td class='col-md-2  '><button  onclick='rowDelete(this)' class='btn btn-light delete'  value='" + count + "'>Delete</button></td>"
+                + "</tr>");
+        }
+
+    };
+
+    function rowAccept(but) {
+        edit_content = $('#txteditcontent').val();
+        if (myValidate(edit_content)) {
+            var valupdate = $(but).parents('td').prev('td').children('input').val();
+            $(but).parents('td').prev('td').replaceWith('<td>' + convertContent(edit_content) + '</td>');
+            $(but).parents('td').replaceWith('<td style="width: 40px"><button  onclick="rowEdit(this)" class="btn btn-light">Edit</button></td>');
+        }
+
+    }
+    function convertContent(val) {
+        var editMsg = $('<div />').text(val).html();
+        return editMsg;
+    }
+    function myValidate(val) {
+        if (val == null || val == '') {
+            $("#showError").show();
+            return false;
+        }
+        $("#showError").hide();
+        return true
+    }
+
+    function likeSearch(but) {
+        var filter = $(but).val();
+        var tr = $('#dt_table #bodyData tr');
+        for (var i = 0; i < tr.length; i++) {
+            var td = $('#bodyData').find("td").eq((i + 1) * 4 - 3);
+            if (td) {
+                txtValue = td.text();
+                if (txtValue.indexOf(filter) > -1) {
+                    tr[i].style.display = "block";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+    crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+    crossorigin="anonymous"></script>
+
+
+</html>
